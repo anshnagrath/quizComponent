@@ -55,9 +55,9 @@ return (
       </div>
  
     <div className={"content"+(this.state.selectedItem == i ? 'active':'')}>
-        <i className="edit icon" style={{ 'position': 'relative','left': '560px'}} onClick={()=>this.setState({editSelected:i})}></i>
-            <p className={"transition"+ (this.state.selectedItem == i ? 'visible':'hidden')}>Number of quiz submitted:</p>
-            <p className={"transition"+ (this.state.selectedItem == i ? 'visible':'hidden')}>Total number of questions present:</p>
+        <i className="edit icon" style={{ 'position': 'relative','left': '560px'}}  onClick={()=>this.setState({editSelected:i})} ></i>
+            <p className={"transition"+ (this.state.selectedItem == i ? 'visible':'hidden')} >Number of quiz submitted:</p>
+            <p className={"transition"+ (this.state.selectedItem == i ? 'visible':'hidden')} >Total number of questions present:</p>
     </div>
   
   
@@ -67,14 +67,41 @@ return (
 }
 renderEditContent = (i)=>{
 
+  return(
+    
+  <div style={{"maxWidth": "600px", "margin": "0 auto", "position": "relative"}}>
+    <div style={{'textAlign': 'center','marginTop': '52px'}}className="field">
+     <div >  
+     <p>Quiz Title</p>   
+    <label  style={{'position': 'absolute'}}>Enter Questions Here</label>
+    <textarea style={{'width':'600px'}}rows="6"></textarea>
+     </div>
+     
+     <div className="ui input" style={{"marginTop": "18px","marginLeft": "0px", "position":"absolute", "left":"0px"}}>
+        <input type="text" placeholder="Add Option Here"/>
+        <i className="large plus square icon" style={{"marginLeft": "10px","marginTop": "10px"}}></i>
+        <i className="large minus square icon" style={{"marginLeft": "0px ","marginTop": "10px"}}></i>
+
+   </div> 
+     <select style={{"position":"absolute", "right":"0px", "marginTop": "18px"}} className = "ui selection   dropdown">
+          <option value="">Gender</option>
+           <option value="1">Male</option>
+          <option value="0">Female</option>
+    </select>
+    
+   </div>
+ 
+</div>
+        
+    )
 }
 
 render() {
 
 return ( <div  >
      {
-     this.state.editSelected == null? this.state.data.map((el,i) => {return this.renderAccordian(i) }):''  
-}
+         (this.state.editSelected == null)? this.state.data.map((el,i) => {return this.renderAccordian(i) }) : this.renderEditContent(this.state.editSelected)
+    }
 </div>
 )
     
