@@ -108,6 +108,19 @@ return(
    </div> 
    ) 
 }
+alertComponent = (alertString)=>{
+    console.log("insideAllert")
+
+    return(
+        <div className="ui message">
+            <i className="close icon"></i>
+            <div className="header">
+                {{alertString}}
+            </div>
+ 
+        </div>
+    )
+}
 allOptions = (question,index)=>{
     let options = [];
     for(let i=0;i<question.options.length;i++){
@@ -126,11 +139,15 @@ addOption = (index) =>{
  this.setState({selectedQuizData:copiedArray}) 
 }
 removeOption = (index,childIndex)=>{
+    if(this.state.selectedQuizData[index].options.length>1){
     let newselectedQuizData = this.state.selectedQuizData[index].options.filter((el,i)=>{return i!=childIndex})
     console.log(newselectedQuizData,'arrrrray')
     let copiedArray = JSON.parse(JSON.stringify(this.state.selectedQuizData))
     copiedArray[index].options = newselectedQuizData
     this.setState({selectedQuizData:copiedArray}) 
+    }else{
+        this.alertComponent("A Question should have atleast one option")
+    }
 }
 editComponent=(i)=>{
     let totalMargin = (this.state.selectedQuizData[i].options.length*100).toString()+'px'
