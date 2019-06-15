@@ -18,9 +18,7 @@ constructor(){
 super();
 this.selectedItem = [];
 this.state = {
-    selectedItem : null,
-    data:[{},{}],
-    editSelected : null,
+    selectedItem : null, tht
     numberOfQuestions: 1,
 }
  this.axiosInstance = axios.create({
@@ -71,13 +69,15 @@ addQuestion=()=>{
  console.log(this.state.numberOfQuestions)
 }
 removeQuestion=()=>{
+if(this.state.numberOfQuestions>1){
 this.setState(previousState=>{return {numberOfQuestions:previousState.numberOfQuestions-1}})
+}    
 }
 editComponent=(i)=>{
  return(
     
-  <div key ={i} style={{"maxWidth": "600px", "margin": "0 auto", "position": "relative"}}>
-    <div style={{'textAlign': 'center','marginTop': '52px'}}className="field">
+  <div key ={i} style={{"maxWidth": "600px", "margin": "0 auto", "position": "relative","marginBottom":'132px'}}>
+    <div style={{'textAlign': 'center','marginTop': '52px'}} className="field">
      <div >  
      <p>Quiz Title</p>   
     <label  style={{'position': 'absolute'}}>Enter Questions Here</label>
@@ -98,16 +98,23 @@ editComponent=(i)=>{
     
    </div>
 
-   <a onClick= {()=>this.addQuestion()} style={{"position":"fixed","width":"60px","height":"60px","bottom":"40px","right":"120px","backgroundColor":"#0C9","color":"#FFF","borderRadius":"50px","textAlign":"center","boxShadow": "2px 2px 3px #999"}}>
+
+   
+</div>
+        
+    )
+}
+addButton = () =>{
+return (
+ <div>   
+<a onClick= {()=>this.addQuestion()} style={{"position":"fixed","width":"60px","height":"60px","bottom":"40px","right":"120px","backgroundColor":"#0C9","color":"#FFF","borderRadius":"50px","textAlign":"center","boxShadow": "2px 2px 3px #999"}}>
 <i style={{"marginTop":"22px"}} className="plus icon"></i>
 </a>
 <a onClick={()=>this.removeQuestion()} style={{"position":"fixed","width":"60px","height":"60px","bottom":"40px","right":"40px","backgroundColor":"#0C9","color":"#FFF","borderRadius":"50px","textAlign":"center","boxShadow": "2px 2px 3px #999"}}>
 <i style={{"marginTop":"22px"}} className="minus icon"></i>
 </a>
-   
 </div>
-        
-    )
+)
 }
 renderEditContent = ()=>{
 const compoents = []
@@ -115,16 +122,27 @@ const compoents = []
     compoents.push(this.editComponent(i))
 }
 //  return (<div> {compoents} <div/>)
-return compoents
+return compoents 
  
+}
+quizTitle(){
+return(
+    <div>
+    <p style={{"textAlign":"center"}}>Quiz Title</p>
+    
+    </div>
+)
 }
 
 render() {
 
 return ( <div>
+    {(this.state.editSelected == null ) ? '':this.quizTitle()}
      {
-         (this.state.editSelected == null)? this.state.data.map((el,i) => {return this.renderAccordian(i) }) : this.renderEditContent(this.state.editSelected)
+    (this.state.editSelected == null)? this.state.data.map((el,i) => {return this.renderAccordian(i) }) : this.renderEditContent(this.state.editSelected)
     }
+   
+    {(this.state.editSelected == null)?'':this.addButton()}
 </div>
 )
     
