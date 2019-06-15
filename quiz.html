@@ -18,8 +18,22 @@ constructor(){
 super();
 this.selectedItem = [];
 this.state = {
-    selectedItem : null, tht
+    selectedItem : null,
+    data:[{},{}],
+    editSelected : null,
     numberOfQuestions: 1,
+    selectedQuizheading:"This is the main heading",
+    selectedQuizData:[{
+        "question":"This is a new One",
+        "corrextAnser":"anwerrrr",
+        "questionType":"MultipleChoice",
+        "options":["show","me","something","good"]   
+        },{
+        "question":"This is a new One",
+        "corrextAnser":"anwerrrr",
+        "questionType":"MultipleChoice",
+        "options":["show","me","something","good"]   
+        }]
 }
  this.axiosInstance = axios.create({
   baseURL: 'http://192.168.1.116/IntegratedSystem/SSBT/CreateQuiz.aspx/',
@@ -33,8 +47,9 @@ async componentDidMount() {
    //  this.setState({ data: res.data });
     
 }
-toggleState = (i)=>{
 
+toggleState = (i)=>{
+console.log("hereeee")
 this.setState({selectedItem:i})
 if(!this.selectedItem.includes(i)){
     this.selectedItem.push(i)
@@ -65,37 +80,86 @@ return (
   )
 }
 addQuestion=()=>{
- this.setState(previousState=>  {return{numberOfQuestions:previousState.numberOfQuestions+1}})   
- console.log(this.state.numberOfQuestions)
+ let newselectedQuizData = this.state.selectedQuizData.concat([{
+        "question":"",
+        "corrextAnser":"",
+        "questionType":"",
+        "options":[""]   
+        }])   
+ this.setState({selectedQuizData:newselectedQuizData})   
+ console.log(this.state.numberOfQuestions,"added")
 }
 removeQuestion=()=>{
-if(this.state.numberOfQuestions>1){
-this.setState(previousState=>{return {numberOfQuestions:previousState.numberOfQuestions-1}})
+let newselectedQuizData = this.state.selectedQuizData.slice(0,this.state.selectedQuizData.length - 1);
+if(this.state.selectedQuizData.length>1){
+this.setState({selectedQuizData:newselectedQuizData})
 }    
 }
+option = (childIndex,parentIndex)=>{
+    let topMargin = ((childIndex==0)?68:(childIndex+1)*68)+'px'
+   let style={"marginTop": topMargin,"marginLeft": "0px", "position":"absolute", "left":"0px"}
+    console.log("insidedddd")
+return(
+    <div key={childIndex} className="ui input" style={style}>
+        <input type="text" placeholder="Add Option Here"/>
+        <i className="large plus square icon" onClick={()=>{this.addOption(parentIndex)}} style={{"marginLeft": "10px","marginTop": "10px"}}></i>
+        <i className="large minus square icon" onClick={()=>{this.removeOption(parentIndex,childIndex)}} style={{"marginLeft": "0px ","marginTop": "10px"}}></i>
+
+   </div> 
+   ) 
+}
+allOptions = (question,index)=>{
+    let options = [];
+    for(let i=0;i<question.options.length;i++){
+    console.log("called or not",question,index,i)
+
+        options.push(this.option(i,index))
+    }
+    console.log(options,'optionsssss')
+    return options
+}
+addOption = (index) =>{
+    console.log(index,"testttttt")
+ let addedOptionData = this.state.selectedQuizData[index].options.concat([""]);
+ let copiedArray = JSON.parse(JSON.stringify(this.state.selectedQuizData))
+ copiedArray[index].options =addedOptionData
+ this.setState({selectedQuizData:copiedArray}) 
+}
+removeOption = (index,childIndex)=>{
+    let newselectedQuizData = this.state.selectedQuizData[index].options.filter((el,i)=>{return i!=childIndex})
+    console.log(newselectedQuizData,'arrrrray')
+    let copiedArray = JSON.parse(JSON.stringify(this.state.selectedQuizData))
+    copiedArray[index].options = newselectedQuizData
+    this.setState({selectedQuizData:copiedArray}) 
+}
 editComponent=(i)=>{
+    let totalMargin = (this.state.selectedQuizData[i].options.length*100).toString()+'px'
+    console.log(totalMargin)
  return(
     
   <div key ={i} style={{"maxWidth": "600px", "margin": "0 auto", "position": "relative","marginBottom":'132px'}}>
     <div style={{'textAlign': 'center','marginTop': '52px'}} className="field">
      <div >  
-     <p>Quiz Title</p>   
+ 
     <label  style={{'position': 'absolute'}}>Enter Questions Here</label>
     <textarea style={{'width':'600px'}}rows="6"></textarea>
      </div>
-     
      <div className="ui input" style={{"marginTop": "18px","marginLeft": "0px", "position":"absolute", "left":"0px"}}>
-        <input type="text" placeholder="Add Option Here"/>
-        <i className="large plus square icon" style={{"marginLeft": "10px","marginTop": "10px"}}></i>
-        <i className="large minus square icon" style={{"marginLeft": "0px ","marginTop": "10px"}}></i>
-
+        <input type="text" placeholder="Coorect answer"/>
+        
    </div> 
+    
+   
      <select style={{"position":"absolute", "right":"0px", "marginTop": "18px"}} className = "ui selection   dropdown">
           <option value="">Gender</option>
            <option value="1">Male</option>
           <option value="0">Female</option>
     </select>
-    
+    <div style={{"marginBottom":totalMargin,"marginTop":"10px"}}>
+    {
+        this.allOptions(this.state.selectedQuizData[i],i)
+        }
+     </div>   
    </div>
 
 
@@ -118,14 +182,14 @@ return (
 }
 renderEditContent = ()=>{
 const compoents = []
- for(let i=0;i<this.state.numberOfQuestions;i++ ){
+ for(let i=0;i<this.state.selectedQuizData.length;i++ ){
     compoents.push(this.editComponent(i))
 }
 //  return (<div> {compoents} <div/>)
 return compoents 
  
 }
-quizTitle(){
+quizTitle=()=>{
 return(
     <div>
     <p style={{"textAlign":"center"}}>Quiz Title</p>
@@ -133,14 +197,22 @@ return(
     </div>
 )
 }
+renderBackButton=()=>{
+    console.log("should be here")
+    return(
+        <div style={{"marginTop":"20px","marginLeft":"20px"}} onClick={()=>{this.setState({editSelected:null})}}>
+            <i className="large arrow left icon" ></i>
 
+        </div>
+    )
+}
 render() {
 
 return ( <div>
+
+    {(this.state.editSelected == null ) ? '':this.renderBackButton()} 
     {(this.state.editSelected == null ) ? '':this.quizTitle()}
-     {
-    (this.state.editSelected == null)? this.state.data.map((el,i) => {return this.renderAccordian(i) }) : this.renderEditContent(this.state.editSelected)
-    }
+     { (this.state.editSelected == null)? this.state.data.map((el,i) => {return this.renderAccordian(i) }) : this.renderEditContent(this.state.editSelected)}
    
     {(this.state.editSelected == null)?'':this.addButton()}
 </div>
