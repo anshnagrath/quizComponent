@@ -21,6 +21,7 @@ this.state = {
     selectedItem : null,
     data:[{},{}],
     editSelected : null,
+    numberOfQuestions: 1,
 }
  this.axiosInstance = axios.create({
   baseURL: 'http://192.168.1.116/IntegratedSystem/SSBT/CreateQuiz.aspx/',
@@ -65,11 +66,17 @@ return (
     </div>
   )
 }
-renderEditContent = (i)=>{
-
-  return(
+addQuestion=()=>{
+ this.setState(previousState=>  {return{numberOfQuestions:previousState.numberOfQuestions+1}})   
+ console.log(this.state.numberOfQuestions)
+}
+removeQuestion=()=>{
+this.setState(previousState=>{return {numberOfQuestions:previousState.numberOfQuestions-1}})
+}
+editComponent=(i)=>{
+ return(
     
-  <div style={{"maxWidth": "600px", "margin": "0 auto", "position": "relative"}}>
+  <div key ={i} style={{"maxWidth": "600px", "margin": "0 auto", "position": "relative"}}>
     <div style={{'textAlign': 'center','marginTop': '52px'}}className="field">
      <div >  
      <p>Quiz Title</p>   
@@ -90,15 +97,31 @@ renderEditContent = (i)=>{
     </select>
     
    </div>
- 
+
+   <a onClick= {()=>this.addQuestion()} style={{"position":"fixed","width":"60px","height":"60px","bottom":"40px","right":"120px","backgroundColor":"#0C9","color":"#FFF","borderRadius":"50px","textAlign":"center","boxShadow": "2px 2px 3px #999"}}>
+<i style={{"marginTop":"22px"}} className="plus icon"></i>
+</a>
+<a onClick={()=>this.removeQuestion()} style={{"position":"fixed","width":"60px","height":"60px","bottom":"40px","right":"40px","backgroundColor":"#0C9","color":"#FFF","borderRadius":"50px","textAlign":"center","boxShadow": "2px 2px 3px #999"}}>
+<i style={{"marginTop":"22px"}} className="minus icon"></i>
+</a>
+   
 </div>
         
     )
 }
+renderEditContent = ()=>{
+const compoents = []
+ for(let i=0;i<this.state.numberOfQuestions;i++ ){
+    compoents.push(this.editComponent(i))
+}
+//  return (<div> {compoents} <div/>)
+return compoents
+ 
+}
 
 render() {
 
-return ( <div  >
+return ( <div>
      {
          (this.state.editSelected == null)? this.state.data.map((el,i) => {return this.renderAccordian(i) }) : this.renderEditContent(this.state.editSelected)
     }
